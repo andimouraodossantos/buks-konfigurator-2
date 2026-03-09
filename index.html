@@ -241,10 +241,10 @@
             }
         }
 
-        /* ✅ NEU: Small Mobile (<480px) = 1 Column */
+        /* Small Mobile (<480px) = 2 Columns */
         @media (max-width: 479px) {
             .options-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
             }
         }
 
@@ -701,7 +701,7 @@
             padding-right: 2rem;
         }
 
-        .mb-6.p-4.bg-gray-50.rounded-lg.border.border-gray-200 {
+        .skip-box {
             margin: 0 2rem;
             position: relative;
             top: 1rem;
@@ -748,6 +748,118 @@
             --vw-to: calc(479 / 100);
         }
     }
+
+        /* ===================================
+           🔥 MOBILE OPTIMIERUNGEN
+        =================================== */
+
+        /* Step-Nav: Zurück-Button + Pills-Leiste */
+        .step-nav-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Pills-Container: Desktop = wrap, Mobile = horizontal scroll */
+        .step-pills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            flex: 1;
+        }
+
+        @media (max-width: 768px) {
+            /* Nav stapeln: Zurück oben, Pills darunter */
+            .step-nav-container {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.5rem;
+            }
+
+            /* Zurück-Button: volle Breite auf Mobile */
+            .step-nav-container .btn-secondary {
+                width: 100% !important;
+            }
+
+            /* Pills: horizontal scrollbar statt wrapping */
+            .step-pills-container {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                padding-bottom: 4px;
+            }
+            .step-pills-container::-webkit-scrollbar { display: none; }
+            .step-pill { flex-shrink: 0; }
+
+            /* TwoColumnField: deutlich weniger padding */
+            .two-column-field {
+                padding: 1.25rem 1rem;
+                gap: 0.75rem;
+            }
+
+            /* Bindings/Format-Grid: weniger padding */
+            .bindings-grid {
+                padding: 1.25rem 1rem;
+            }
+
+            /* Header-Padding reduzieren */
+            .step-header-label {
+                padding: 1rem !important;
+            }
+            .step-header-content {
+                padding: 0 1rem 0.75rem !important;
+            }
+
+            /* Titel kleiner */
+            .main-title {
+                font-size: 1.375rem !important;
+            }
+
+            /* Äußerer Wrapper: kein top-padding */
+            .min-h-screen.bg-gray-50 {
+                padding-top: 0 !important;
+            }
+
+            /* Touch-Targets: min. 44px */
+            .choice-button {
+                min-height: 44px;
+            }
+
+            /* Sticky-Button: safe area für iOS */
+            .sticky-button {
+                bottom: max(12px, env(safe-area-inset-bottom));
+            }
+
+            /* Sidebar auf Mobile ausblenden */
+            .sidebar-mobile-hide {
+                display: none;
+            }
+
+            /* Skip-Box: kein horizontales Padding/Margin, volle Breite */
+            .skip-box {
+                margin: 0 !important;
+                top: 0 !important;
+                padding-left: 1rem;
+                padding-right: 1rem;
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
+            }
+
+            /* Bindings-Grid auch auf kleinen Phones 2 Spalten */
+            .bindings-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+
+            /* Option-Label etwas kleiner auf kleinen Screens */
+            .option-label {
+                font-size: 12px;
+                height: auto;
+                min-height: 50px;
+                padding: 1rem 0.5rem 0.5rem;
+            }
+        }
 </style>
 
 <body class="bg-gray-50">
@@ -2299,13 +2411,13 @@
             // 🔥 DYNAMISCHE SUMMARY MIT generateSummary()
             const summaryByGroup = generateSummary(formData);
             return (
-                <div className="min-h-screen bg-gray-50 py-8 pb-32">
+                <div className="min-h-screen bg-gray-50 py-8">
                     <div className="max-w-7xl mx-auto">
 
                         {/* ✅ 1. STEP PILLS (sticky) - JETZT ZUERST */}
                         {currentStep > 1 && (
                             <div className="p-4 mb-6 sticky top-0 z-40 white-bg-top border-bottom-black">
-                                <div className="flex items-center gap-4">
+                                <div className="step-nav-container">
                                     <button
                                         onClick={() => setCurrentStep(currentStep - 1)}
                                         className="btn-secondary shrink-0"
@@ -2313,7 +2425,7 @@
                                     >
                                         ← Zurück
                                     </button>
-                                    <div className="flex flex-wrap gap-2 flex-1">
+                                    <div className="step-pills-container">
                                         {visibleSteps.map((s, index) => (
                                             <button key={s.id} onClick={() => s.id <= currentStep && setCurrentStep(s.id)}
                                                 className={`step-pill ${s.id === currentStep ? 'active' : s.id < currentStep ? 'completed' : 'disabled'}`}
@@ -2325,14 +2437,14 @@
                         )}
 
                         {/* ✅ 2. HEADER - JETZT DANACH */}
-                        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 border-bottom-black">
-                            <div className="lg:col-span-1 flex items-center p-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-4 gap-0 border-bottom-black">
+                            <div className="lg:col-span-1 flex items-center step-header-label" style={{ padding: '1.5rem 2.5rem' }}>
                                 <h1 className="text-3xl font-bold main-title">
                                     {visibleSteps.findIndex(s => s.id === currentStep) + 1}. {allSteps.find(s => s.id === currentStep)?.label || 'Bindeart'}
                                 </h1>
                             </div>
                             <div className="lg:col-span-3">
-                                <div className="rounded-lg p-8">
+                                <div className="step-header-content" style={{ padding: '1.5rem 2rem' }}>
                                     <h1 className="text-3xl font-bold main-title">
                                         {formData.bindeart ? bindeartNames[formData.bindeart] : ''}
                                     </h1>
@@ -2341,9 +2453,9 @@
                         </div>
 
                         {/* ✅ 3. CONTENT */}
-                        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-4 gap-0">
                             {Object.values(summaryByGroup).some(g => g.length > 0) && (
-                                <div className="lg:col-span-1">
+                                <div className="lg:col-span-1 sidebar-mobile-hide">
                                     <div className="bg-white p-6 sticky top-24 max-h-[calc(100vh-120px)] overflow-y-auto">
                                         <h3 className="font-bold text-lg mb-4">Ihre Auswahl</h3>
                                         {Object.entries(stepGroups).map(([groupKey, groupInfo]) => {
@@ -2375,7 +2487,7 @@
                                 </div>
                             )}
 
-                            <div className={Object.values(summaryByGroup).some(g => g.length > 0) ? "lg:col-span-3" : "lg:col-span-4"}>
+                            <div className={Object.values(summaryByGroup).some(g => g.length > 0) ? "col-span-4 lg:col-span-3" : "col-span-4"}>
                                 <div className="bg-white">
                                     {currentStep === 1 && <Step1 formData={formData} update={updateFormData} updateWithReset={updateFormDataWithReset} next={setCurrentStep} stepLabel={getStepLabel(1)} BILDER={BILDER} />}
                                     {currentStep === 2 && <Step2 formData={formData} update={updateFormData} updateWithReset={updateFormDataWithReset} add={addAnmerkung} rueckruf={handleRueckruf} next={setCurrentStep} stepLabel={getStepLabel(2)} BILDER={BILDER} />}
@@ -2622,7 +2734,7 @@
                 <div className="step-card">
 
 
-                    <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200 skip-box">
                         <p className="text-sm mb-3">Alle Felder in diesem Schritt sind optional.</p>
                         <button onClick={() => nextStep()} className="btn-skip">
                             Diesen Schritt überspringen →
@@ -5074,7 +5186,7 @@
                 <div className="step-card">
 
 
-                    <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200 skip-box">
                         <p className="text-sm mb-3">Alle Felder in diesem Schritt sind optional.</p>
                         <button onClick={() => nextStep()} className="btn-skip">
                             Diesen Schritt überspringen →
@@ -5425,7 +5537,7 @@
                 <div className="step-card">
 
 
-                    <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200 skip-box">
                         <p className="text-sm mb-3">Alle Felder in diesem Schritt sind optional.</p>
                         <button onClick={() => nextStep()} className="btn-skip">
                             Diesen Schritt überspringen →
@@ -5647,7 +5759,7 @@
                 <div className="step-card">
 
 
-                    <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200 skip-box">
                         <p className="text-sm mb-3">Alle Felder in diesem Schritt sind optional.</p>
                         <button onClick={() => nextStep()} className="btn-skip">
                             Diesen Schritt überspringen →
