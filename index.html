@@ -62,7 +62,7 @@
         .step-card {
             animation: fadeIn 0.3s;
             border: 1px solid black;
-            border-top: none;
+            border-radius: 0 0 5px 5px;
             padding-bottom: 2rem;
         }
 
@@ -460,8 +460,8 @@
         }
 
         .step-pill.disabled {
-            background: #F9FAFB;
-            color: #9CA3AF;
+            background: #EBDFC3;
+            color: #6b5b3e;
             cursor: not-allowed;
         }
 
@@ -488,8 +488,9 @@
         /* PAGE HINT */
         .page-hint {
             background: white;
+            border: 1px solid #e5e7eb;
             border-left: 3px solid #FF5F37;
-            border-radius: 0 5px 5px 0;
+            border-radius: 0 5px 5px 5px;
             padding: 8px 12px;
             margin-top: 4px;
             font-size: 0.75rem;
@@ -610,10 +611,11 @@
             background-color: #F3F3EB !important;
         }
 
-        /* TWO-COLUMN FIELD LABELS IN MONTREAL BOLD */
+        /* TWO-COLUMN FIELD LABELS IN MONTREAL MEDIUM */
         .two-column-field h3 {
             font-family: 'PP Neue Montreal', sans-serif !important;
-            font-weight: 700 !important;
+            font-weight: 500 !important;
+            line-height: 1.25 !important;
         }
 
         /* Labels direkt über Inputs: weniger Abstand */
@@ -891,11 +893,11 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            color: #FF5F37;
+            color: black;
             margin-bottom: 0.625rem;
             font-family: 'PP Neue Montreal', sans-serif;
             padding-bottom: 0.375rem;
-            border-bottom: 1.5px solid #FF5F37;
+            border-bottom: 1.5px solid black;
         }
         .summary-row {
             display: grid;
@@ -960,6 +962,15 @@
             .summary-row { grid-template-columns: 1fr; }
             .summary-row-label { padding-bottom: 0; color: #9ca3af; font-size: 0.75rem; }
             .summary-row-value { padding-top: 0.125rem; padding-bottom: 0.5rem; }
+        }
+
+        /* KONTAKTFORMULAR: kompakter, ohne Trennstriche */
+        .step-12 .two-column-field {
+            padding: 1.5rem 2.5rem;
+            border-bottom: none;
+        }
+        .step-12 .two-column-field + .two-column-field {
+            border-top: 1px solid #e5e7eb;
         }
 </style>
 
@@ -2171,9 +2182,9 @@ function BuksKonfigurator() {
     'softcover-klebebindung': 'Softcover Klebebindung',
     'softcover-fadenheftung': 'Softcover Fadenheftung',
     'wire-o': 'Wire-O Bindung',
-    'broschuere-rueckstich': 'Broschüre Rückstichheftung',
-    'broschuere-faden': 'Broschüre Fadenheftung',
-    'pappebuch': 'Pappebuch Layflat'
+    'broschuere-rueckstich': 'Broschüre mit Rückstichheftung',
+    'broschuere-faden': 'Broschüre mit Fadenheftung',
+    'pappebuch': 'Pappebuch und Layflat'
   };
 
   // 🔥 ZENTRALE BILD-KONFIGURATION - ALLE BILDER
@@ -2272,6 +2283,7 @@ function BuksKonfigurator() {
       'Fälzelband Broschur': './img/ausfuehrung-sc-faelzelband-broschur.jpg',
       'OTA Bindung Freirückenbroschur': './img/ausfuehrung-sc-ota-bindung-freirueckenbroschur.jpg',
       'Englische Broschur Softcover mit Schutzumschlag': './img/ausfuehrung-sc-englische-broschur-softcover-mit-schutzumschlag.jpg',
+      'Englische Broschur (Softcover mit Schutzumschlag)': './img/ausfuehrung-sc-englische-broschur-softcover-mit-schutzumschlag.jpg',
       'Japan Broschur': './img/ausfuehrung-sc-japan-broschur.jpg',
       'Schweizer Broschur mit Fälzelaband': './img/ausfuehrung-sc-schweizer-broschur-mit-faelzelaband.jpg',
       'Offene Fadenheftung': './img/ausfuehrung-sc-offene-fadenheftung.jpg',
@@ -2301,12 +2313,13 @@ function BuksKonfigurator() {
       default: './img/klammern-2k.jpg'
     },
     garnfarbe: {
+      'Weiß (Standard)': './img/garnfarbe-weiss.jpg',
       'Schwarz': './img/garnfarbe-schwarz.jpg',
       'Weiß': './img/garnfarbe-weiss.jpg',
       'Rot': './img/garnfarbe-rot.jpg',
       'Grün': './img/garnfarbe-gruen.jpg',
       'PDF Download': './img/pdf-download-garn.jpg',
-      default: './img/garnfarbe-schwarz.jpg'
+      default: './img/garnfarbe-weiss.jpg'
     },
     kapitalband: {
       'Ohne Kapitalband': './img/kapitalband-ohne.jpg',
@@ -2374,6 +2387,7 @@ function BuksKonfigurator() {
       '1/1': './img/druck-1-0.jpg',
       '2/2': './img/druck-2-0.jpg',
       '4/4': './img/druck-4-0-cmyk.jpg',
+      '5/0 CMYK + HKS/Pantone': './img/druck-5-0-cmyk-pantone.jpg',
       default: './img/druck-4-0-cmyk.jpg'
     },
     druckInnen: {
@@ -2940,7 +2954,8 @@ function PageHint({
   return /*#__PURE__*/React.createElement("div", {
     className: "page-hint"
   }, getHintText(), /*#__PURE__*/React.createElement("span", {
-    className: "block text-xs mt-1 text-gray-500"
+    className: "block text-xs mt-1",
+    style: {color: 'black'}
   }, "Bitte geben Sie die Gesamtseitenzahl an. 1 Blatt entspricht 2 Seiten."));
 }
 
@@ -3105,15 +3120,15 @@ function Step1({
     disabled: false
   }, {
     id: 'broschuere-rueckstich',
-    name: 'Broschüre Rückstichheftung',
+    name: 'Broschüre mit Rückstichheftung',
     disabled: false
   }, {
     id: 'broschuere-faden',
-    name: 'Broschüre Fadenheftung',
+    name: 'Broschüre mit Fadenheftung',
     disabled: false
   }, {
     id: 'pappebuch',
-    name: 'Pappebuch Layflat',
+    name: 'Pappebuch und Layflat',
     disabled: false
   }];
   return /*#__PURE__*/React.createElement("div", {
@@ -3165,6 +3180,9 @@ function Step2({
 }) {
   const [a, setA] = useState(formData.anmerkungen?.step2 || '');
   const [stepErrors, setStepErrors] = useState([]);
+  useEffect(() => {
+    if (stepErrors.length > 0) setStepErrors(validateStep2(formData));
+  }, [formData]);
   const formate = formData.bindeart === 'pappebuch' ? ['245 × 340 mm', '235 × 315 mm', '210 × 297 mm', 'A4 Hoch (210 × 297 mm)', 'A4 Quer (297 × 210 mm)', 'A5 Hoch (148 × 210 mm)', 'A5 Quer (210 × 148 mm)', '160 × 220 mm', '225 × 225 mm', '170 × 170 mm', '160 × 160 mm'] : ['A4 Hoch (210 × 297 mm)', 'A4 Quer (297 × 210 mm)', 'A5 Hoch (148 × 210 mm)', 'A5 Quer (210 × 148 mm)', 'A6 Hoch (105 × 148 mm)', 'A6 Quer (148 × 105 mm)', 'DIN LANG Hoch (105 × 210 mm)', 'DIN LANG Quer (210 × 105 mm)', 'US Format (215,9 × 279,4 mm)', 'Quadrat (297 × 297 mm)', 'Quadrat (210 × 210 mm)', 'Quadrat (148 × 148 mm)', '170 × 240 mm', '170 × 210 mm', '155 × 220 mm', '135 × 205 mm', '125 × 190 mm'];
   return /*#__PURE__*/React.createElement("div", {
     className: "step-card"
@@ -3195,12 +3213,10 @@ function Step2({
     className: "option-checkmark"
   }, "\u2713")), /*#__PURE__*/React.createElement("div", {
     className: "option-label"
-  }, f)))), /*#__PURE__*/React.createElement("p", {
-    className: "text-sm mb-6 px-1"
-  }, "Bitte beachten Sie bei der Formatwahl, dass je gr\xF6\xDFer das Verh\xE4ltnis von H\xF6he zu Breite, desto schlechter in der Regel das Aufschlagverhalten eines Buches ist."), /*#__PURE__*/React.createElement("div", {
+  }, f)))), /*#__PURE__*/React.createElement("div", {
     className: "mb-6"
   }, /*#__PURE__*/React.createElement("p", {
-    className: "font-medium mb-3"
+    className: "font-bold mb-3"
   }, "Individuelles Format"), /*#__PURE__*/React.createElement("div", {
     className: "flex gap-3"
   }, /*#__PURE__*/React.createElement("button", {
@@ -3248,7 +3264,9 @@ function Step2({
     onChange: e => update('formatHoehe', e.target.value),
     className: "input-field",
     placeholder: "297"
-  })), formData.formatBreite && formData.formatHoehe && parseInt(formData.formatHoehe) / parseInt(formData.formatBreite) > 1.5 && /*#__PURE__*/React.createElement("div", {
+  })), /*#__PURE__*/React.createElement("p", {
+    className: "text-sm mt-2 px-1"
+  }, "Bitte beachten Sie bei der Formatwahl, dass je gr\xF6\xDFer das Verh\xE4ltnis von H\xF6he zu Breite, desto schlechter in der Regel das Aufschlagverhalten eines Buches ist."), formData.formatBreite && formData.formatHoehe && parseInt(formData.formatHoehe) / parseInt(formData.formatBreite) > 1.5 && /*#__PURE__*/React.createElement("div", {
     className: "bg-yellow-50 border-l-4 border-yellow-500 p-4"
   }, /*#__PURE__*/React.createElement("p", {
     className: "text-sm text-yellow-800"
@@ -3271,7 +3289,7 @@ function Step2({
     className: "info-box mb-4"
   }, /*#__PURE__*/React.createElement("p", {
     className: "text-sm"
-  }, "Wenn Sie jetzt \"R\xFCckruf vereinbaren\" klicken, senden wir Ihre bisherigen Angaben an unser Team.")), /*#__PURE__*/React.createElement("button", {
+  }, "Wenn Sie jetzt \u201ER\xFCckruf vereinbaren\u201C klicken, senden wir Ihre bisherigen Angaben an unser Team.")), /*#__PURE__*/React.createElement("button", {
     onClick: () => rueckruf('Format'),
     className: "btn-secondary mb-4"
   }, "R\xFCckruf vereinbaren"), formData.individuellFormat && /*#__PURE__*/React.createElement("div", {
@@ -3377,7 +3395,7 @@ function Step3({
     className: "info-box mb-4"
   }, /*#__PURE__*/React.createElement("p", {
     className: "text-sm"
-  }, "Wenn Sie jetzt \"R\xFCckruf vereinbaren\" klicken, senden wir Ihre bisherigen Angaben an unser Team.")), /*#__PURE__*/React.createElement("button", {
+  }, "Wenn Sie jetzt \u201ER\xFCckruf vereinbaren\u201C klicken, senden wir Ihre bisherigen Angaben an unser Team.")), /*#__PURE__*/React.createElement("button", {
     onClick: () => rueckruf('Satz und Layout'),
     className: "btn-secondary mb-4"
   }, "R\xFCckruf vereinbaren"), /*#__PURE__*/React.createElement("div", {
@@ -3401,6 +3419,9 @@ function Step4({
   const [a, setA] = useState(formData.anmerkungen?.step4 || '');
   const [showErrors, setShowErrors] = useState(false);
   const [stepErrors, setStepErrors] = useState([]);
+  useEffect(() => {
+    if (stepErrors.length > 0) setStepErrors(validateStep4(formData, { isDruckError, isPapierError }));
+  }, [formData]);
   const druckOpts = [{
     id: 'unbedruckt',
     name: 'Unbedruckt',
@@ -3686,9 +3707,11 @@ function Step4({
       whiteSpace: 'pre-line'
     }
   }, "Spacer 1,5mm\\nSeitenst\xE4rke"))), /*#__PURE__*/React.createElement("div", {
-    className: "bg-gray-50 border-l-4 border-gray-300 p-4 mt-4"
+    className: "bg-gray-50 border-l-4 p-4 mt-4",
+    style: {borderLeftColor: '#FF5F37'}
   }, /*#__PURE__*/React.createElement("p", {
-    className: "text-sm text-gray-700"
+    className: "text-sm",
+    style: {color: 'black'}
   }, "Ein Spacer ist eine unbedruckte Pappe, die bei einem Pappebuch zwischen zwei bedruckte Seiten eingef\xFCgt wird. Die Seiten werden so noch einmal dicker und massiver. Dies wird h\xE4ufig bei B\xFCchern f\xFCr Kleinstkinder verwendet.")))), /*#__PURE__*/React.createElement(TwoColumnField, {
     label: "Farbschnitt"
   }, /*#__PURE__*/React.createElement("div", {
@@ -3739,7 +3762,8 @@ function Step4({
       whiteSpace: 'pre-line'
     }
   }, f.name))))), /*#__PURE__*/React.createElement(TwoColumnField, {
-    label: "Buchecken"
+    label: "Buchecken",
+    required: true
   }, /*#__PURE__*/React.createElement("div", {
     className: "options-grid"
   }, [{
@@ -3968,7 +3992,8 @@ function Step4({
   }, "\u2713")), /*#__PURE__*/React.createElement("div", {
     className: "option-label"
   }, t))))), formData.bindeart !== 'wire-o' && /*#__PURE__*/React.createElement(TwoColumnField, {
-    label: "Buchecken"
+    label: "Buchecken",
+    required: true
   }, /*#__PURE__*/React.createElement("div", {
     className: "options-grid"
   }, bucheckenOpts.map(opt => /*#__PURE__*/React.createElement("div", {
@@ -4012,7 +4037,7 @@ function Step4({
     className: "info-box mb-4"
   }, /*#__PURE__*/React.createElement("p", {
     className: "text-sm"
-  }, "Wenn Sie jetzt \"R\xFCckruf vereinbaren\" klicken, senden wir Ihre bisherigen Angaben an unser Team.")), /*#__PURE__*/React.createElement("button", {
+  }, "Wenn Sie jetzt \u201ER\xFCckruf vereinbaren\u201C klicken, senden wir Ihre bisherigen Angaben an unser Team.")), /*#__PURE__*/React.createElement("button", {
     onClick: () => rueckruf('Innenteil'),
     className: "btn-secondary mb-4"
   }, "R\xFCckruf vereinbaren"), /*#__PURE__*/React.createElement("div", {
@@ -4049,6 +4074,9 @@ function Step5({
 }) {
   const [a, setA] = useState(formData.anmerkungen?.step5 || '');
   const [stepErrors, setStepErrors] = useState([]);
+  useEffect(() => {
+    if (stepErrors.length > 0) setStepErrors(validateStep5(formData));
+  }, [formData]);
   const ringfarbenOpts = [{
     id: 'Silber',
     name: 'Silber'
@@ -4367,9 +4395,7 @@ function Step5({
     className: "option-label"
   }, o.name))))), (formData.ausfuehrung || formData.bindeart === 'broschuere-rueckstich') && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(TwoColumnField, {
     label: "Alternative Exemplare"
-  }, /*#__PURE__*/React.createElement("p", {
-    className: "info-text mb-4"
-  }, "Wenn es verschiedene Varianten ihres Buches geben soll, z. B. Sprachvarianten oder eine Serie, dann geben Sie bitte hier an, wie sich die Gesamtauflage auf die Varianten verteilt."), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex gap-4 mb-4"
   }, /*#__PURE__*/React.createElement("button", {
     onClick: () => update('alternativeExemplare', 'ja'),
@@ -4377,7 +4403,9 @@ function Step5({
   }, "Ja"), /*#__PURE__*/React.createElement("button", {
     onClick: () => update('alternativeExemplare', 'nein'),
     className: `choice-button ${formData.alternativeExemplare === 'nein' ? 'active' : ''}`
-  }, "Nein")), formData.alternativeExemplare === 'ja' && /*#__PURE__*/React.createElement("div", {
+  }, "Nein")), /*#__PURE__*/React.createElement("p", {
+    className: "info-text mb-4"
+  }, "Wenn es verschiedene Varianten ihres Buches geben soll, z. B. Sprachvarianten oder eine Serie, dann geben Sie bitte hier an, wie sich die Gesamtauflage auf die Varianten verteilt."), formData.alternativeExemplare === 'ja' && /*#__PURE__*/React.createElement("div", {
     className: "mt-4"
   }, formData.alternativeExemplareVarianten.map((v, i) => /*#__PURE__*/React.createElement("div", {
     key: i,
@@ -4580,7 +4608,7 @@ function Step5({
     className: "info-box mb-4"
   }, /*#__PURE__*/React.createElement("p", {
     className: "text-sm"
-  }, "Wenn Sie jetzt \"R\xFCckruf vereinbaren\" klicken, senden wir Ihre bisherigen Angaben an unser Team.")), /*#__PURE__*/React.createElement("button", {
+  }, "Wenn Sie jetzt \u201ER\xFCckruf vereinbaren\u201C klicken, senden wir Ihre bisherigen Angaben an unser Team.")), /*#__PURE__*/React.createElement("button", {
     onClick: () => rueckruf('Bindung'),
     className: "btn-secondary mb-4"
   }, "R\xFCckruf vereinbaren"), /*#__PURE__*/React.createElement("div", {
@@ -4613,6 +4641,9 @@ function Step6({
 }) {
   const [a, setA] = useState(formData.anmerkungen?.step6 || '');
   const [stepErrors, setStepErrors] = useState([]);
+  useEffect(() => {
+    if (stepErrors.length > 0) setStepErrors(validateStep6(formData, { isLayflatEinfach, showBuchruecken }));
+  }, [formData]);
   const isSoftcover = formData.bindeart?.startsWith('softcover') || formData.bindeart?.startsWith('broschuere');
   const isWireO = formData.bindeart === 'wire-o';
   const isPappebuch = formData.bindeart === 'pappebuch';
@@ -4723,6 +4754,9 @@ function Step6({
   }, {
     id: '4/4',
     name: '4/4 CMYK'
+  }, {
+    id: '5/0 CMYK + HKS/Pantone',
+    name: '5/0 CMYK + HKS/Pantone'
   }];
   const druckInnenOpts = [{
     id: 'Unbedruckt',
@@ -5071,17 +5105,7 @@ function Step6({
     className: "option-checkmark"
   }, "\u2713")), /*#__PURE__*/React.createElement("div", {
     className: "option-label"
-  }, l.name)))), /*#__PURE__*/React.createElement("label", {
-    className: "block mb-2 font-medium text-sm"
-  }, "Wunschlackierung hier notieren:"), /*#__PURE__*/React.createElement("textarea", {
-    value: formData.lackierungDeckblattAnmerkung || '',
-    onChange: e => update('lackierungDeckblattAnmerkung', e.target.value),
-    placeholder: "z.B. Spezielle Lackierung...",
-    className: "input-field",
-    style: {
-      minHeight: '80px'
-    }
-  }))), /*#__PURE__*/React.createElement(TwoColumnField, {
+  }, l.name))))))  , /*#__PURE__*/React.createElement(TwoColumnField, {
     label: "Pr\xE4gung Deckblatt"
   }, /*#__PURE__*/React.createElement("div", {
     className: "flex gap-4 mb-4"
@@ -5363,17 +5387,7 @@ function Step6({
     className: "option-checkmark"
   }, "\u2713")), /*#__PURE__*/React.createElement("div", {
     className: "option-label"
-  }, l.name)))), /*#__PURE__*/React.createElement("label", {
-    className: "block mb-2 font-medium text-sm"
-  }, "Wunschlackierung hier notieren:"), /*#__PURE__*/React.createElement("textarea", {
-    value: formData.lackierungRueckblattAnmerkung || '',
-    onChange: e => update('lackierungRueckblattAnmerkung', e.target.value),
-    placeholder: "z.B. Spezielle Lackierung...",
-    className: "input-field",
-    style: {
-      minHeight: '80px'
-    }
-  }))), /*#__PURE__*/React.createElement(TwoColumnField, {
+  }, l.name))))))  , /*#__PURE__*/React.createElement(TwoColumnField, {
     label: "Pr\xE4gung R\xFCckblatt"
   }, /*#__PURE__*/React.createElement("div", {
     className: "flex gap-4 mb-4"
@@ -5748,17 +5762,7 @@ function Step6({
     className: "option-checkmark"
   }, "\u2713")), /*#__PURE__*/React.createElement("div", {
     className: "option-label"
-  }, l.name)))), /*#__PURE__*/React.createElement("label", {
-    className: "block mb-2 font-medium text-sm"
-  }, "Wunschlackierung hier notieren:"), /*#__PURE__*/React.createElement("textarea", {
-    value: formData.lackierungAnmerkung || '',
-    onChange: e => update('lackierungAnmerkung', e.target.value),
-    placeholder: "z.B. Spezielle Lackierung...",
-    className: "input-field",
-    style: {
-      minHeight: '80px'
-    }
-  })))), !isPappebuch && /*#__PURE__*/React.createElement(TwoColumnField, {
+  }, l.name))))))), !isPappebuch && /*#__PURE__*/React.createElement(TwoColumnField, {
     label: `Prägung ${coverLabel}`
   }, /*#__PURE__*/React.createElement("div", {
     className: "flex gap-4 mb-4"
@@ -5871,7 +5875,7 @@ function Step6({
     className: "info-box mb-4"
   }, /*#__PURE__*/React.createElement("p", {
     className: "text-sm"
-  }, "Wenn Sie jetzt \"R\xFCckruf vereinbaren\" klicken, senden wir Ihre bisherigen Angaben an unser Team.")), /*#__PURE__*/React.createElement("button", {
+  }, "Wenn Sie jetzt \u201ER\xFCckruf vereinbaren\u201C klicken, senden wir Ihre bisherigen Angaben an unser Team.")), /*#__PURE__*/React.createElement("button", {
     onClick: () => rueckruf(coverLabel),
     className: "btn-secondary mb-4"
   }, "R\xFCckruf vereinbaren"), /*#__PURE__*/React.createElement("div", {
@@ -5908,6 +5912,9 @@ function Step7({
 }) {
   const [a, setA] = useState(formData.anmerkungen?.step7 || '');
   const [stepErrors, setStepErrors] = useState([]);
+  useEffect(() => {
+    if (stepErrors.length > 0) setStepErrors(validateStep7(formData));
+  }, [formData]);
   const vorsatzTypOpts = formData.bindeart === 'hardcover-klebebindung' ? [{
     id: 'Standard',
     name: 'Standard'
@@ -5945,9 +5952,7 @@ function Step7({
   }];
   return /*#__PURE__*/React.createElement("div", {
     className: "step-card"
-  }, /*#__PURE__*/React.createElement("p", {
-    className: "info-text mb-6"
-  }, "Vor- und Nachsatz kommt nur im Hardcover zum Einsatz. Es ist das Papier mit dem der Buchblock und der Einband verbunden werden."), /*#__PURE__*/React.createElement(TwoColumnField, {
+  }, /*#__PURE__*/React.createElement(TwoColumnField, {
     label: "Vor- und Nachsatztyp",
     required: true
   }, /*#__PURE__*/React.createElement("div", {
@@ -5974,7 +5979,9 @@ function Step7({
     className: "option-checkmark"
   }, "\u2713")), /*#__PURE__*/React.createElement("div", {
     className: "option-label"
-  }, opt.name))))), formData.vorsatzTyp === 'Standard' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(TwoColumnField, {
+  }, opt.name)))), /*#__PURE__*/React.createElement("p", {
+    className: "info-text mt-4"
+  }, "Vor- und Nachsatz kommt nur im Hardcover zum Einsatz. Es ist das Papier mit dem der Buchblock und der Einband verbunden werden.")), formData.vorsatzTyp === 'Standard' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(TwoColumnField, {
     label: "Papier",
     required: true
   }, /*#__PURE__*/React.createElement("div", {
@@ -6020,7 +6027,7 @@ function Step7({
     className: "info-box mb-4"
   }, /*#__PURE__*/React.createElement("p", {
     className: "text-sm"
-  }, "Wenn Sie jetzt \"R\xFCckruf vereinbaren\" klicken, senden wir Ihre bisherigen Angaben an unser Team.")), /*#__PURE__*/React.createElement("button", {
+  }, "Wenn Sie jetzt \u201ER\xFCckruf vereinbaren\u201C klicken, senden wir Ihre bisherigen Angaben an unser Team.")), /*#__PURE__*/React.createElement("button", {
     onClick: () => rueckruf('Vorsatz'),
     className: "btn-secondary mb-4"
   }, "R\xFCckruf vereinbaren"), /*#__PURE__*/React.createElement("div", {
@@ -6450,7 +6457,7 @@ function Step8({
     className: "info-box mb-4"
   }, /*#__PURE__*/React.createElement("p", {
     className: "text-sm"
-  }, "Wenn Sie jetzt \"R\xFCckruf vereinbaren\" klicken, senden wir Ihre bisherigen Angaben an unser Team.")), /*#__PURE__*/React.createElement("button", {
+  }, "Wenn Sie jetzt \u201ER\xFCckruf vereinbaren\u201C klicken, senden wir Ihre bisherigen Angaben an unser Team.")), /*#__PURE__*/React.createElement("button", {
     onClick: () => rueckruf('Weiterverarbeitung'),
     className: "btn-secondary mb-4"
   }, "R\xFCckruf vereinbaren"), /*#__PURE__*/React.createElement("div", {
@@ -6560,9 +6567,11 @@ function Step9({
     onClick: () => update('schutzumschlag', 'nein'),
     className: `choice-button ${formData.schutzumschlag === 'nein' ? 'active' : ''}`
   }, "Nein")), /*#__PURE__*/React.createElement("div", {
-    className: "bg-gray-50 border-l-4 border-gray-300 p-4"
+    className: "bg-gray-50 border-l-4 p-4",
+    style: {borderLeftColor: '#FF5F37'}
   }, /*#__PURE__*/React.createElement("p", {
-    className: "text-sm text-gray-700"
+    className: "text-sm",
+    style: {color: 'black'}
   }, "Schutzumschl\xE4ge werden oft bei B\xFCchern mit festem Einband (Hardcover) eingesetzt. Sie k\xF6nnen Gewebeeinb\xE4nde oder Buchdecken, die mit offenem Papier bezogen sind, vor Schmutz und Lichteinstrahlung sch\xFCtzen. Heute dienen sie aber zumeist als Schmuck und um noch mehr Raum f\xFCr Informationen \xFCber das Buch und seine/n Autor:in zu haben."))), formData.schutzumschlag === 'ja' && /*#__PURE__*/React.createElement(TwoColumnField, {
     label: "Material",
     required: true
@@ -6692,17 +6701,7 @@ function Step9({
     className: "option-checkmark"
   }, "\u2713")), /*#__PURE__*/React.createElement("div", {
     className: "option-label"
-  }, l.name)))), /*#__PURE__*/React.createElement("label", {
-    className: "block mb-2 font-medium text-sm"
-  }, "Wunschlackierung hier notieren:"), /*#__PURE__*/React.createElement("textarea", {
-    value: formData.lackierungSchutzumschlagAnmerkung || '',
-    onChange: e => update('lackierungSchutzumschlagAnmerkung', e.target.value),
-    placeholder: "z.B. Spezielle Lackierung...",
-    className: "input-field",
-    style: {
-      minHeight: '80px'
-    }
-  }))), /*#__PURE__*/React.createElement(TwoColumnField, {
+  }, l.name))))))  , /*#__PURE__*/React.createElement(TwoColumnField, {
     label: "Pr\xE4gung Schutzumschlag"
   }, /*#__PURE__*/React.createElement("div", {
     className: "flex gap-4 mb-4"
@@ -6770,7 +6769,7 @@ function Step9({
     className: "info-box mb-4"
   }, /*#__PURE__*/React.createElement("p", {
     className: "text-sm"
-  }, "Wenn Sie jetzt \"R\xFCckruf vereinbaren\" klicken, senden wir Ihre bisherigen Angaben an unser Team.")), /*#__PURE__*/React.createElement("button", {
+  }, "Wenn Sie jetzt \u201ER\xFCckruf vereinbaren\u201C klicken, senden wir Ihre bisherigen Angaben an unser Team.")), /*#__PURE__*/React.createElement("button", {
     onClick: () => rueckruf('Schutzumschlag'),
     className: "btn-secondary mb-4"
   }, "R\xFCckruf vereinbaren"), /*#__PURE__*/React.createElement("div", {
@@ -6869,7 +6868,7 @@ function Step10({
     className: "info-box mb-4"
   }, /*#__PURE__*/React.createElement("p", {
     className: "text-sm"
-  }, "Wenn Sie jetzt \"R\xFCckruf vereinbaren\" klicken, senden wir Ihre bisherigen Angaben an unser Team.")), /*#__PURE__*/React.createElement("button", {
+  }, "Wenn Sie jetzt \u201ER\xFCckruf vereinbaren\u201C klicken, senden wir Ihre bisherigen Angaben an unser Team.")), /*#__PURE__*/React.createElement("button", {
     onClick: () => rueckruf('Druckdaten'),
     className: "btn-secondary mb-4"
   }, "R\xFCckruf vereinbaren"), /*#__PURE__*/React.createElement("div", {
@@ -7010,6 +7009,9 @@ function Step12({
 }) {
   const [showErrors, setShowErrors] = useState(false);
   const [stepErrors, setStepErrors] = useState([]);
+  useEffect(() => {
+    if (stepErrors.length > 0) setStepErrors(validateStep12(formData));
+  }, [formData]);
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
@@ -7047,7 +7049,7 @@ function Step12({
     }
   };
   return /*#__PURE__*/React.createElement("div", {
-    className: "step-card"
+    className: "step-card step-12"
   }, /*#__PURE__*/React.createElement(TwoColumnField, {
     label: "Firma",
     required: true
@@ -7151,7 +7153,7 @@ function Step12({
   }), /*#__PURE__*/React.createElement("span", {
     className: "text-sm"
   }, "Ich akzeptiere die Datenschutzerkl\xE4rung", /*#__PURE__*/React.createElement("span", {
-    className: "required-star"
+    style: {color: '#ef4444', marginLeft: '2px'}
   }, "*"))))), /*#__PURE__*/React.createElement("div", {
     className: "sticky-button"
   }, /*#__PURE__*/React.createElement(StepErrorList, {
