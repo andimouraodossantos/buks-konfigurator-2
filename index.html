@@ -971,7 +971,7 @@ const {
   useEffect
 } = React;
 
-// 🔥 WEB3FORMS — Access Key hier eintragen (web3forms.com)
+// 🔥 WEB3FORMS — Access Key (web3forms.com)
 const WEB3FORMS_ACCESS_KEY = 'e3611c30-fcda-425b-a0ff-1179ee202a2c';
 
 // 🔥 E-MAIL FORMATTER — Baut lesbaren Text für die Team-Mail
@@ -6981,52 +6981,21 @@ function Step12({
     setSubmitError(null);
     setIsSubmitting(true);
 
-    // Leere Felder entfernen, Objekte/Arrays serialisieren, Booleans übersetzen
-    const cleanPayload = (data) => {
-      const result = {};
-      for (const [key, value] of Object.entries(data)) {
-        if (value === '' || value === null || value === undefined) continue;
-        if (typeof value === 'boolean') {
-          result[key] = value ? 'Ja' : 'Nein';
-        } else if (Array.isArray(value)) {
-          if (value.length === 0) continue;
-          // Leere Objekt-Arrays (z.B. [{ name: '', anzahl: '' }]) überspringen
-          const nonEmpty = value.filter(item =>
-            typeof item !== 'object' ? item !== '' :
-            Object.values(item).some(v => v !== '' && v !== null && v !== undefined)
-          );
-          if (nonEmpty.length === 0) continue;
-          result[key] = JSON.stringify(nonEmpty);
-        } else if (typeof value === 'object') {
-          const str = JSON.stringify(value);
-          if (str === '{}' || str === 'null') continue;
-          result[key] = str;
-        } else {
-          result[key] = value;
-        }
-      }
-      return result;
-    };
-
     try {
       const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           access_key: WEB3FORMS_ACCESS_KEY,
-          subject: `Neue Anfrage: ${formData.firma} — ${formData.bindeart}`,
-          from_name: `${formData.vorname || ''} ${formData.nachname || ''}`.trim(),
-          email: formData.email,
-          replyto: formData.email,
-          message: buildEmailMessage(formData),
-        })
+          subject:    `Neue Anfrage: ${formData.firma} — ${formData.bindeart}`,
+          from_name:  `${formData.vorname || ''} ${formData.nachname || ''}`.trim(),
+          email:      formData.email,
+          replyto:    formData.email,
+          message:    buildEmailMessage(formData),
+        }),
       });
       const result = await response.json();
-      if (!result.success) {
-        throw new Error(result.message || 'Unbekannter Fehler');
-      }
+      if (!result.success) throw new Error(result.message || 'Unbekannter Fehler');
       setSubmitted(true);
     } catch (err) {
       setSubmitError('Beim Senden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder kontaktieren Sie uns direkt.');
