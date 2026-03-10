@@ -3223,10 +3223,7 @@ function Step2({
     onClick: () => {
       updateWithReset('individuellFormat', true, 2);
       update('format', '');
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
+      document.documentElement.scrollTop = 0;
     },
     className: `choice-button ${formData.individuellFormat === true ? 'active' : ''}`
   }, "Ja"), /*#__PURE__*/React.createElement("button", {
