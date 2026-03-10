@@ -7175,6 +7175,16 @@ function Step12({
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(/*#__PURE__*/React.createElement(BuksKonfigurator, null));
     </script>
+<script>
+// Meldet Höhe an Parent-Frame (buks-next konfigurieren-Seite)
+(function() {
+  function sendHeight() {
+    window.parent.postMessage({ type: 'resize', height: document.body.scrollHeight }, '*');
+  }
+  new ResizeObserver(sendHeight).observe(document.body);
+  sendHeight();
+})();
+</script>
 </body>
 
 </html>
