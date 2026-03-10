@@ -1050,15 +1050,56 @@ const buildEmailMessage = (d) => {
     msg += val('Kapitalband', d.kapitalbandFarbe);
     if (d.kapitalbandCustom) msg += val('  Wunsch', d.kapitalbandCustom);
     msg += val('Leseband', d.lesebaendchenFarbe);
+    if (d.lesebaendchenCustom) msg += val('  Wunsch', d.lesebaendchenCustom);
+    msg += val('Fälzelband', d.farbeFaelzelband);
+    if (d.farbeFaelzelbandCustom) msg += val('  Wunsch', d.farbeFaelzelbandCustom);
     msg += '\nDruck & Veredelung Buchdecke:\n';
     msg += val('  Druck', d.druckBuchdecke);
     msg += val('  Dispersionslack', d.dispersionslackBuchdecke);
     msg += val('  Folienkaschierung', d.folienkaschierung);
     if (d.folienkaschierung === 'ja') msg += val('    Typ', d.folienkaschierungTyp);
     msg += val('  Lackierung', d.lackierung);
-    if (d.lackierung === 'ja') msg += val('    Typ', d.lackierungTyp);
+    if (d.lackierung === 'ja') { msg += val('    Typ', d.lackierungTyp); if (d.lackierungAnmerkung) msg += val('    Anmerkung', d.lackierungAnmerkung); }
     msg += val('  Prägung', d.praegung);
     if (d.praegung === 'ja') msg += val('    Typ', d.praegungTyp);
+
+    // DECKBLATT & RÜCKBLATT (nur Wire-O)
+    if (d.bindeart === 'wire-o') {
+        msg += sep('DECKBLATT (Wire-O)');
+        msg += val('Bezugsmaterial', d.bezugsmaterialDeckblatt);
+        if (d.bezugsmaterialDeckblatt === 'Durchgefärbter Karton') {
+            msg += val('  Kartonfarbe', d.durchgefaerbterKartonFarbeDeckblatt);
+            if (d.durchgefaerbterKartonFarbeFreitextDeckblatt) msg += val('  Wunschfarbe', d.durchgefaerbterKartonFarbeFreitextDeckblatt);
+        }
+        msg += val('Grammatur', d.grammaturDeckblatt ? d.grammaturDeckblatt + 'g' : '');
+        if (d.kartonAnmerkungDeckblatt) msg += val('Anmerkung', d.kartonAnmerkungDeckblatt);
+        msg += val('Druck', d.druckDeckblatt);
+        msg += val('Dispersionslack', d.dispersionslackDeckblatt);
+        msg += val('Folienkaschierung', d.folienkaschierungDeckblatt);
+        if (d.folienkaschierungDeckblatt === 'ja') msg += val('  Typ', d.folienkaschierungDeckblattTyp);
+        msg += val('Lackierung', d.lackierungDeckblatt);
+        if (d.lackierungDeckblatt === 'ja') { msg += val('  Typ', d.lackierungDeckblattTyp); if (d.lackierungDeckblattAnmerkung) msg += val('  Anmerkung', d.lackierungDeckblattAnmerkung); }
+        msg += val('Prägung', d.praegungDeckblatt);
+        if (d.praegungDeckblatt === 'ja') msg += val('  Typ', d.praegungDeckblattTyp);
+        msg += val('Deckfolie', d.deckfolie);
+
+        msg += sep('RÜCKBLATT (Wire-O)');
+        msg += val('Bezugsmaterial', d.bezugsmaterialRueckblatt);
+        if (d.bezugsmaterialRueckblatt === 'Durchgefärbter Karton') {
+            msg += val('  Kartonfarbe', d.durchgefaerbterKartonFarbeRueckblatt);
+            if (d.durchgefaerbterKartonFarbeFreitextRueckblatt) msg += val('  Wunschfarbe', d.durchgefaerbterKartonFarbeFreitextRueckblatt);
+        }
+        msg += val('Grammatur', d.grammaturRueckblatt ? d.grammaturRueckblatt + 'g' : '');
+        if (d.kartonAnmerkungRueckblatt) msg += val('Anmerkung', d.kartonAnmerkungRueckblatt);
+        msg += val('Druck', d.druckRueckblatt);
+        msg += val('Dispersionslack', d.dispersionslackRueckblatt);
+        msg += val('Folienkaschierung', d.folienkaschierungRueckblatt);
+        if (d.folienkaschierungRueckblatt === 'ja') msg += val('  Typ', d.folienkaschierungRueckblattTyp);
+        msg += val('Lackierung', d.lackierungRueckblatt);
+        if (d.lackierungRueckblatt === 'ja') { msg += val('  Typ', d.lackierungRueckblattTyp); if (d.lackierungRueckblattAnmerkung) msg += val('  Anmerkung', d.lackierungRueckblattAnmerkung); }
+        msg += val('Prägung', d.praegungRueckblatt);
+        if (d.praegungRueckblatt === 'ja') msg += val('  Typ', d.praegungRueckblattTyp);
+    }
 
     // VORSATZ
     msg += sep('VORSATZ');
@@ -1077,7 +1118,7 @@ const buildEmailMessage = (d) => {
         msg += val('Folienkaschierung', d.folienkaschierungSchutzumschlag);
         if (d.folienkaschierungSchutzumschlag === 'ja') msg += val('  Typ', d.folienkaschierungSchutzumschlagTyp);
         msg += val('Lackierung', d.lackierungSchutzumschlag);
-        if (d.lackierungSchutzumschlag === 'ja') msg += val('  Typ', d.lackierungSchutzumschlagTyp);
+        if (d.lackierungSchutzumschlag === 'ja') { msg += val('  Typ', d.lackierungSchutzumschlagTyp); if (d.lackierungSchutzumschlagAnmerkung) msg += val('  Anmerkung', d.lackierungSchutzumschlagAnmerkung); }
         msg += val('Prägung', d.praegungSchutzumschlag);
         if (d.praegungSchutzumschlag === 'ja') msg += val('  Typ', d.praegungSchutzumschlagTyp);
     }
@@ -1096,7 +1137,9 @@ const buildEmailMessage = (d) => {
     msg += val('Gummiband', d.gummiband);
     if (d.gummiband === 'ja') { msg += val('  Farbe', d.gummibandFarbe); if (d.gummibandCustom) msg += val('  Wunsch', d.gummibandCustom); }
     msg += val('Registerstanzung', d.registerstanzung);
-    if (d.registerstanzung === 'ja') msg += val('  Typ', d.registerstanzungTyp);
+    if (d.registerstanzung === 'ja') { msg += val('  Typ', d.registerstanzungTyp); if (d.registerstanzungWunsch) msg += val('  Wunsch', d.registerstanzungWunsch); }
+    msg += val('Stanzen Pappebuch', d.stanzenPappebuch);
+    if (d.stanzenPappebuch === 'ja' && d.stanzenPappebuchBeschreibung) msg += val('  Beschreibung', d.stanzenPappebuchBeschreibung);
     msg += val('Aufkleber', d.aufkleber);
     if (d.aufkleber === 'ja') {
         msg += val('  Größe', d.aufkleberGroesse);
