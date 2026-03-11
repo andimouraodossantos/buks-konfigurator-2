@@ -2273,6 +2273,10 @@ function BuksKonfigurator() {
       default: './img/druck-innen-innen-druck-4-0-cmyk.jpg'
     },
     ausfuehrung: {
+      // Bindungstyp-spezifische Compound-Keys (Prefix: bindeart + ':')
+      'hardcover-fadenheftung:Klassisches Hardcover (Standard)': './img/ausfuehrung-hc-hardcover-fadenheftung.jpg',
+      'softcover-fadenheftung:Klassisches Softcover': './img/ausfuehrung-sc-softcover-fadenheftung.jpg',
+      'softcover-fadenheftung:Schweizer Broschur mit offener Fadenheftung': './img/ausfuehrung-sc-schweizer-broschur-mit-offener-fadenheftung.jpg',
       'Klassisches Hardcover (Standard)': './img/ausfuehrung-hc-hardcover-klebebindung.jpg',
       'Flexcover': './img/ausfuehrung-hc-flexcover.jpg',
       'Steifbroschur mit Fälzelband': './img/ausfuehrung-hc-steifbroschur-mit-faelzelband.jpg',
@@ -2367,7 +2371,16 @@ function BuksKonfigurator() {
       'Tomatenrot': './img/durchgefaerbterkarton-farbiger-karton-tomatenrot.jpg',
       'Bordeaux': './img/durchgefaerbterkarton-farbiger-karton-bordeaux.jpg'
     },
+    // Flache Bogen-Variante für Broschüren und Wire-O (keine 3D-Tiefe)
+    durchgefaerbterkartonBogen: {
+      'Navy': './img/durchgefaerbterkarton-bogen-farbiger-karton-bogen-navy.jpg',
+      'Rosé': './img/durchgefaerbterkarton-bogen-farbiger-karton-bogen-rose.jpg',
+      'Tomatenrot': './img/durchgefaerbterkarton-bogen-farbiger-karton-bogen-tomatenrot.jpg',
+      'Bordeaux': './img/durchgefaerbterkarton-bogen-farbiger-karton-bogen-bordeaux.jpg'
+    },
     umschlagAusfuehrung: {
+      // Bindungstyp-spezifischer Compound-Key für Fadenheftung
+      'broschuere-faden:Standard mit 4 Seiten': './img/ausfuehrung-umschlag-broschuere-mit-fadenheftung.jpg',
       'Standard mit 4 Seiten': './img/ausfuehrung-umschlag-broschuere-mit-rueckstichheftung.jpg',
       'Umschlag mit 6 Seiten (Klappe Vorne)': './img/ausfuehrung-umschlag-umschlag-mit-6-seiten.jpg',
       'Umschlag mit 6 Seiten (Klappe Hinten)': './img/ausfuehrung-umschlag-umschlag-mit-6-seiten-2.jpg',
@@ -2457,6 +2470,7 @@ function BuksKonfigurator() {
     gestanzteKlappen: {
       '1': './img/pappebuch-gestanzte-klappen-01.jpg',
       '2': './img/pappebuch-gestanzte-klappen-02.jpg',
+      '3': './img/pappebuch-gestanzte-klappen-03.jpg',
       default: './img/pappebuch-gestanzte-klappen-01.jpg'
     },
     stanzen: {
@@ -3803,7 +3817,7 @@ function Step4({
     className: `choice-button ${formData.gestanzteKlappen === 'nein' ? 'active' : ''}`
   }, "Nein")), formData.gestanzteKlappen === 'ja' && /*#__PURE__*/React.createElement("div", {
     className: "options-grid"
-  }, ['1', '2'].map(n => /*#__PURE__*/React.createElement("div", {
+  }, ['1', '2', '3'].map(n => /*#__PURE__*/React.createElement("div", {
     key: n,
     className: "option-card",
     style: {
@@ -4375,7 +4389,7 @@ function Step5({
   }, /*#__PURE__*/React.createElement("div", {
     className: "option-image-container"
   }, /*#__PURE__*/React.createElement("img", {
-    src: BILDER.ausfuehrung[o.id] || BILDER.ausfuehrung.default,
+    src: BILDER.ausfuehrung[formData.bindeart + ':' + o.id] || BILDER.ausfuehrung[o.id] || BILDER.ausfuehrung.default,
     alt: o.name,
     onLoad: e => {
       e.target.classList.add('loaded');
@@ -4853,7 +4867,7 @@ function Step6({
   }, /*#__PURE__*/React.createElement("div", {
     className: "option-image-container"
   }, /*#__PURE__*/React.createElement("img", {
-    src: BILDER.umschlagAusfuehrung[opt.id] || BILDER.umschlagAusfuehrung.default,
+    src: BILDER.umschlagAusfuehrung[formData.bindeart + ':' + opt.id] || BILDER.umschlagAusfuehrung[opt.id] || BILDER.umschlagAusfuehrung.default,
     alt: opt.name,
     onLoad: e => {
       e.target.classList.add('loaded');
@@ -4938,7 +4952,7 @@ function Step6({
   }, /*#__PURE__*/React.createElement("div", {
     className: "option-image-container"
   }, /*#__PURE__*/React.createElement("img", {
-    src: BILDER.durchgefaerbterkarton[f.id] || BILDER.default,
+    src: BILDER.durchgefaerbterkartonBogen[f.id] || BILDER.default,
     alt: f.name,
     onLoad: e => {
       e.target.classList.add('loaded');
@@ -5220,7 +5234,7 @@ function Step6({
   }, /*#__PURE__*/React.createElement("div", {
     className: "option-image-container"
   }, /*#__PURE__*/React.createElement("img", {
-    src: BILDER.durchgefaerbterkarton[f.id] || BILDER.default,
+    src: BILDER.durchgefaerbterkartonBogen[f.id] || BILDER.default,
     alt: f.name,
     onLoad: e => {
       e.target.classList.add('loaded');
@@ -5479,7 +5493,7 @@ function Step6({
   }, /*#__PURE__*/React.createElement("div", {
     className: "option-image-container"
   }, /*#__PURE__*/React.createElement("img", {
-    src: BILDER.durchgefaerbterkarton[f.id] || BILDER.default,
+    src: (formData.bindeart?.startsWith('broschuere') ? BILDER.durchgefaerbterkartonBogen : BILDER.durchgefaerbterkarton)[f.id] || BILDER.default,
     alt: f.name,
     onLoad: e => {
       e.target.classList.add('loaded');
