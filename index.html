@@ -3046,6 +3046,18 @@ function validateStep4(formData, {
   if (isDruckError || isPapierError) {
     errs.push('Seitenzahlen korrigieren — Summe muss mit der Gesamtseitenzahl übereinstimmen');
   }
+  // Buchecken pflicht für alle Bindearten außer Wire-O
+  if (formData.bindeart !== 'wire-o' && !formData.buchecken) {
+    errs.push('Buchecken auswählen');
+  }
+  // Zweistufig: Farbschnitt Ja → Typ muss gewählt sein
+  if (formData.farbschnitt === 'ja' && !formData.farbschnittTyp) {
+    errs.push('Farbschnitt: Typ auswählen');
+  }
+  // Zweistufig: Erweiterter Farbraum Ja → Typ muss gewählt sein
+  if (formData.erweiterterFarbraum === 'ja' && !formData.erweiterterFarbraumTyp) {
+    errs.push('Erweiterter Farbraum: Typ auswählen');
+  }
   return errs;
 }
 function validateStep5(formData) {
@@ -3066,6 +3078,10 @@ function validateStep5(formData) {
       errs.push('Garnfarbe auswählen');
     }
   }
+  // Ausführung auch für Pappebuch pflicht (Layflatbindung-Variante)
+  if (formData.bindeart === 'pappebuch' && !formData.ausfuehrung) {
+    errs.push('Ausführung auswählen');
+  }
   return errs;
 }
 function validateStep6(formData, {
@@ -3074,11 +3090,29 @@ function validateStep6(formData, {
 }) {
   const errs = [];
   const isWireO = formData.bindeart === 'wire-o';
+  const isSoftcover = formData.bindeart?.startsWith('softcover') || formData.bindeart?.startsWith('broschuere');
+  const isPappebuch = formData.bindeart === 'pappebuch';
+  const showFolieLack = isPappebuch
+    ? formData.bezugsmaterial !== 'Gewebeeinband (z.B. Leinen)'
+    : formData.bezugsmaterial !== 'Gewebeeinband (z.B. Leinen)' && formData.bezugsmaterial !== 'Halbgewebeeinband + Papierbezug';
+
   if (isWireO) {
     if (!formData.bezugsmaterialDeckblatt) errs.push('Bezugsmaterial Deckblatt auswählen');
     if (!formData.druckDeckblatt) errs.push('Druck Deckblatt auswählen');
     if (!formData.bezugsmaterialRueckblatt) errs.push('Bezugsmaterial Rückblatt auswählen');
     if (!formData.druckRueckblatt) errs.push('Druck Rückblatt auswählen');
+    // Zweistufig Wire-O Deckblatt
+    if (formData.druckDeckblatt && formData.druckDeckblatt !== 'Unbedruckt') {
+      if (formData.folienkaschierungDeckblatt === 'ja' && !formData.folienkaschierungDeckblattTyp) errs.push('Folienkaschierung Deckblatt: Typ auswählen');
+      if (formData.lackierungDeckblatt === 'ja' && !formData.lackierungDeckblattTyp) errs.push('Lackierung Deckblatt: Typ auswählen');
+      if (formData.praegungDeckblatt === 'ja' && !formData.praegungDeckblattTyp) errs.push('Prägung Deckblatt: Typ auswählen');
+    }
+    // Zweistufig Wire-O Rückblatt
+    if (formData.druckRueckblatt && formData.druckRueckblatt !== 'Unbedruckt') {
+      if (formData.folienkaschierungRueckblatt === 'ja' && !formData.folienkaschierungRueckblattTyp) errs.push('Folienkaschierung Rückblatt: Typ auswählen');
+      if (formData.lackierungRueckblatt === 'ja' && !formData.lackierungRueckblattTyp) errs.push('Lackierung Rückblatt: Typ auswählen');
+      if (formData.praegungRueckblatt === 'ja' && !formData.praegungRueckblattTyp) errs.push('Prägung Rückblatt: Typ auswählen');
+    }
   } else if (formData.bindeart?.startsWith('broschuere')) {
     if (!formData.umschlagAusfuehrung) errs.push('Ausführung Umschlag auswählen');
     if (!formData.bezugsmaterial) errs.push('Bezugsmaterial auswählen');
@@ -3090,12 +3124,46 @@ function validateStep6(formData, {
     if (!formData.druckBuchdecke) errs.push('Druck Buchdecke auswählen');
   }
   if (!isWireO && showBuchruecken && !formData.buchruecken) errs.push('Buchrücken auswählen');
+  // Zweistufig: Druck innen (U2+U3) – nur bei Softcover/Broschüre sichtbar
+  if (isSoftcover && formData.druckInnen === 'ja' && !formData.druckInnenTyp) {
+    errs.push('Druck innen (U2+U3): Typ auswählen');
+  }
+  // Zweistufig: Folienkaschierung, Lackierung, Prägung Buchdecke (wenn showFolieLack)
+  if (!isWireO && showFolieLack) {
+    if (formData.folienkaschierung === 'ja' && !formData.folienkaschierungTyp) errs.push('Folienkaschierung: Typ auswählen');
+    if (formData.lackierung === 'ja' && !formData.lackierungTyp) errs.push('Lackierung: Typ auswählen');
+    if (formData.praegung === 'ja' && !formData.praegungTyp) errs.push('Prägung: Typ auswählen');
+  }
   return errs;
 }
 function validateStep7(formData) {
   const errs = [];
   if (!formData.vorsatzTyp) errs.push('Vor- und Nachsatztyp auswählen');
   if (formData.vorsatzTyp === 'Standard' && !formData.vorsatzPapier) errs.push('Papier auswählen');
+  // Zweistufig: Druck Vor- und Nachsatz Ja → Typ muss gewählt sein
+  if (formData.druckVorsatz === 'ja' && !formData.druckVorsatzTyp) {
+    errs.push('Druck Vor- und Nachsatz: Typ auswählen');
+  }
+  return errs;
+}
+function validateStep9(formData) {
+  const errs = [];
+  if (formData.schutzumschlag === 'ja') {
+    if (!formData.schutzumschlagMaterial) errs.push('Material Schutzumschlag auswählen');
+    if (formData.druckSchutzumschlag === 'ja') {
+      if (!formData.druckSchutzumschlagTyp) errs.push('Druck Schutzumschlag: Typ auswählen');
+      // Zweistufig innerhalb Druck Schutzumschlag
+      if (formData.folienkaschierungSchutzumschlag === 'ja' && !formData.folienkaschierungSchutzumschlagTyp) {
+        errs.push('Folienkaschierung Schutzumschlag: Typ auswählen');
+      }
+      if (formData.lackierungSchutzumschlag === 'ja' && !formData.lackierungSchutzumschlagTyp) {
+        errs.push('Lackierung Schutzumschlag: Typ auswählen');
+      }
+      if (formData.praegungSchutzumschlag === 'ja' && !formData.praegungSchutzumschlagTyp) {
+        errs.push('Prägung Schutzumschlag: Typ auswählen');
+      }
+    }
+  }
   return errs;
 }
 function validateStep12(formData) {
@@ -6555,6 +6623,10 @@ function Step9({
   BILDER
 }) {
   const [a, setA] = useState(formData.anmerkungen?.step9 || '');
+  const [stepErrors, setStepErrors] = useState([]);
+  useEffect(() => {
+    if (stepErrors.length > 0) setStepErrors(validateStep9(formData));
+  }, [formData]);
   const schutzumschlagMaterialOpts = [{
     id: 'Bilderdruck matt 170g',
     name: 'Bilderdruck matt 170g'
@@ -6849,8 +6921,18 @@ function Step9({
     className: "btn-secondary mb-4"
   }, "R\xFCckruf vereinbaren"), /*#__PURE__*/React.createElement("div", {
     className: "sticky-button"
-  }, /*#__PURE__*/React.createElement("button", {
-    onClick: () => nextStep(),
+  }, /*#__PURE__*/React.createElement(StepErrorList, {
+    errors: stepErrors
+  }), /*#__PURE__*/React.createElement("button", {
+    onClick: () => {
+      const errs = validateStep9(formData);
+      if (errs.length > 0) {
+        setStepErrors(errs);
+        return;
+      }
+      setStepErrors([]);
+      nextStep();
+    },
     className: "btn-primary"
   }, "Weiter")));
 }
