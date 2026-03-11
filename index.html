@@ -2461,6 +2461,11 @@ function BuksKonfigurator() {
       default: './img/vorsatz-papier-naturpapier-weiss.jpg'
     },
     druckVorsatz: {
+      'Unbedruckt': './img/druck-unbedruckt.jpg',
+      '1/0': './img/druck-1-0.jpg',
+      '2/0 Schwarz + HKS/Pantone': './img/druck-2-0.jpg',
+      '4/0 CMYK': './img/druck-4-0-cmyk.jpg',
+      '5/0 CMYK + HKS/Pantone': './img/druck-5-0-cmyk-pantone.jpg',
       default: './img/druck-4-0-cmyk.jpg'
     },
     spacer: {
@@ -2568,7 +2573,7 @@ function BuksKonfigurator() {
       4: ['seitenzahl', 'druckInnenteil', 'druckInnenteilSeitenzahlen', 'zusaetzlichDispersionslack', 'erweiterterFarbraum', 'erweiterterFarbraumTyp', 'beratungFarbraster', 'papier', 'papierSeitenzahlen', 'papierEingabeTyp', 'papierGrammatur', 'farbschnitt', 'farbschnittTyp', 'buchecken', 'karton', 'spacer', 'spacerFarbig'],
       5: ['ausfuehrung', 'alternativeExemplare', 'alternativeExemplareVarianten', 'beratungAufschlag', 'garnfarbe', 'garnfarbeCustom', 'kapitalbandFarbe', 'kapitalbandCustom', 'lesebaendchenFarbe', 'lesebaendchenCustom', 'farbeFaelzelband', 'farbeFaelzelbandCustom', 'ringfarbe', 'klammerfarbe', 'anzahlKlammern'],
       6: ['bezugsmaterial', 'bezugsmaterialCustom', 'druckBuchdecke', 'dispersionslackBuchdecke', 'druckInnen', 'druckInnenTyp', 'dispersionslackInnen', 'klappenAmUmschlag', 'klappenTyp', 'durchgefaerbterKartonFarbe', 'durchgefaerbterKartonFarbeFreitext', 'folienkaschierung', 'folienkaschierungTyp', 'lackierung', 'lackierungTyp', 'praegung', 'praegungTyp', 'buchruecken', 'umschlagAusfuehrung', 'bezugsmaterialDeckblatt', 'durchgefaerbterKartonFarbeDeckblatt', 'durchgefaerbterKartonFarbeFreitextDeckblatt', 'bezugsmaterialRueckblatt', 'durchgefaerbterKartonFarbeRueckblatt', 'durchgefaerbterKartonFarbeFreitextRueckblatt', 'stanzungBuchdecke', 'stanzungTyp'],
-      7: ['vorsatzTyp', 'vorsatzPapier'],
+      7: ['vorsatzTyp', 'vorsatzPapier', 'druckVorsatz', 'druckVorsatzTyp'],
       8: ['einschweissen', 'banderolieren', 'konfektionieren', 'konfektionierenBeschreibung', 'einlegen', 'einlegenTyp', 'einlegenBeschreibung', 'gummiband', 'gummibandFarbe', 'gummibandCustom', 'registerstanzung', 'registerstanzungWunsch', 'registerstanzungTyp', 'aufkleber', 'aufkleberGroesse', 'aufkleberAnbringen', 'aufkleberForm', 'aufkleberMaterial', 'aufkleberFarbigkeit'],
       9: ['schutzumschlag', 'schutzumschlagMaterial', 'druckSchutzumschlag', 'druckSchutzumschlagTyp'],
       10: ['druckdatenkorrektur', 'probeseiten', 'farbproof', 'druckdatenerstellung', 'vorabexemplar', 'formproof']
@@ -2603,7 +2608,7 @@ function BuksKonfigurator() {
     }
     if (key === 'vorsatzTyp' && currentStepNum === 7) {
       if (value !== 'Standard') {
-        conditionalResets.push('vorsatzPapier');
+        conditionalResets.push('vorsatzPapier', 'druckVorsatz', 'druckVorsatzTyp');
       }
     }
     const allFieldsToReset = [...new Set([...fieldsToReset, ...conditionalResets])];
@@ -5961,6 +5966,22 @@ function Step7({
     id: 'Naturpapier durchgefärbt, gerippt (z.B. Peyer)',
     name: 'Naturpapier durchgefärbt, gerippt (z.B. Peyer)'
   }];
+  const druckVorsatzOpts = [{
+    id: 'Unbedruckt',
+    name: 'Unbedruckt'
+  }, {
+    id: '1/0',
+    name: '1/0'
+  }, {
+    id: '2/0 Schwarz + HKS/Pantone',
+    name: '2/0 Schwarz + HKS/Pantone'
+  }, {
+    id: '4/0 CMYK',
+    name: '4/0 CMYK'
+  }, {
+    id: '5/0 CMYK + HKS/Pantone',
+    name: '5/0 CMYK + HKS/Pantone'
+  }];
   return /*#__PURE__*/React.createElement("div", {
     className: "step-card"
   }, /*#__PURE__*/React.createElement(TwoColumnField, {
@@ -6019,7 +6040,45 @@ function Step7({
     className: "option-checkmark"
   }, "\u2713")), /*#__PURE__*/React.createElement("div", {
     className: "option-label"
-  }, p.name)))))), /*#__PURE__*/React.createElement("div", {
+  }, p.name)))))
+  , /*#__PURE__*/React.createElement(TwoColumnField, {
+    label: "Druck Vor- und Nachsatz"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex gap-4 mb-4"
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => update('druckVorsatz', 'ja'),
+    className: `choice-button ${formData.druckVorsatz === 'ja' ? 'active' : ''}`
+  }, "Ja"), /*#__PURE__*/React.createElement("button", {
+    onClick: () => update('druckVorsatz', 'nein'),
+    className: `choice-button ${formData.druckVorsatz === 'nein' ? 'active' : ''}`
+  }, "Nein")), formData.druckVorsatz === 'ja' && /*#__PURE__*/React.createElement("div", {
+    className: "options-grid"
+  }, druckVorsatzOpts.map(d => /*#__PURE__*/React.createElement("div", {
+    key: d.id,
+    onClick: () => update('druckVorsatzTyp', d.id),
+    className: `option-card ${formData.druckVorsatzTyp === d.id ? 'active' : ''}`
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "option-image-container"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: BILDER.druckVorsatz[d.id] || BILDER.druckVorsatz.default,
+    alt: d.name,
+    onLoad: e => {
+      e.target.classList.add('loaded');
+      e.target.parentElement.classList.add('has-image');
+    },
+    onError: e => {
+      e.target.src = BILDER.default;
+      e.target.classList.add('loaded');
+      e.target.parentElement.classList.add('has-image');
+    }
+  }), formData.druckVorsatzTyp === d.id && /*#__PURE__*/React.createElement("div", {
+    className: "option-checkmark"
+  }, "\u2713")), /*#__PURE__*/React.createElement("div", {
+    className: "option-label"
+  }, d.name)))), /*#__PURE__*/React.createElement("p", {
+    className: "info-text mt-3"
+  }, "Die Flatterseite ist die nicht verklebte Seite des Vor- und Nachsatzes."))
+  ), /*#__PURE__*/React.createElement("div", {
     className: "mb-6"
   }, /*#__PURE__*/React.createElement("label", {
     className: "block font-medium mb-2"
